@@ -26,6 +26,7 @@ Important Bugfixes:
 
 Language Features:
  * Implemented ``type(T).min`` and ``type(T).max`` for every integer type ``T`` that returns the smallest and largest value representable by the type.
+ * Yul: EVM instruction `pc()` is marked deprecated and will be removed in the next breaking release.
 
 
 Compiler Features:
