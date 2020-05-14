@@ -1210,6 +1210,15 @@ void CompilerUtils::pushZeroValue(Type const& _type)
 			m_context << u256(0);
 		return;
 	}
+	if (referenceType->location() == DataLocation::CallData)
+	{
+		solAssert(referenceType->sizeOnStack() == 1 || referenceType->sizeOnStack() == 2, "");
+		m_context << Instruction::CALLDATASIZE;
+		if (referenceType->sizeOnStack() == 2)
+			m_context << 0;
+		return;
+	}
+
 	solAssert(referenceType->location() == DataLocation::Memory, "");
 	if (auto arrayType = dynamic_cast<ArrayType const*>(&_type))
 		if (arrayType->isDynamicallySized())

@@ -2238,6 +2238,30 @@ string YulUtilFunctions::zeroValueFunction(Type const& _type, bool _splitFunctio
 			("functionName", functionName)
 			.render();
 
+		if (_type.dataStoredIn(DataLocation::CallData))
+		{
+			solAssert(
+				_type.category() == Type::Category::Struct ||
+				_type.category() == Type::Category::Array,
+			"");
+			Whiskers templ(R"(
+				function <functionName>() -> offset<?hasLength>, length</hasLength> {
+					offset := calldatasize()
+					<?hasLength> length := 0 </hasLength>
+				}
+			)");
+			templ("functionName", functionName);
+			if (
+				_type.category() == Type::Category::Array &&
+				dynamic_cast<ArrayType const&>(_type).isDynamicallySized()
+			)
+				templ("hasLength", true);
+			else
+				templ("hasLength", false);
+
+			return templ.render();
+		}
+
 		Whiskers templ(R"(
 			function <functionName>() -> ret {
 				ret := <zeroValue>

@@ -616,18 +616,14 @@ set<VariableDeclaration::Location> VariableDeclaration::allowedDataLocations() c
 
 	if (!hasReferenceOrMappingType() || isStateVariable() || isEventParameter())
 		return set<Location>{ Location::Unspecified };
-	else if (isExternalCallableParameter())
-	{
-		set<Location> locations{ Location::CallData };
-		if (isLibraryFunctionParameter())
-			locations.insert(Location::Storage);
-		return locations;
-	}
 	else if (isCallableOrCatchParameter())
 	{
 		set<Location> locations{ Location::Memory };
 		if (isInternalCallableParameter() || isLibraryFunctionParameter() || isTryCatchParameter())
 			locations.insert(Location::Storage);
+		if (!isTryCatchParameter())
+			locations.insert(Location::CallData);
+
 		return locations;
 	}
 	else if (isLocalVariable())
@@ -642,8 +638,7 @@ set<VariableDeclaration::Location> VariableDeclaration::allowedDataLocations() c
 				case Type::Category::Mapping:
 					return set<Location>{ Location::Storage };
 				default:
-					//  TODO: add Location::Calldata once implemented for local variables.
-					return set<Location>{ Location::Memory, Location::Storage };
+					return set<Location>{ Location::Memory, Location::Storage, Location::CallData };
 			}
 		};
 		return dataLocations(typeName()->annotation().type, dataLocations);
