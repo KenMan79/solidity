@@ -14,6 +14,7 @@ Bugfixes:
  * Type Checker: Disallow assignments to storage variables of type ``mapping``.
  * NatSpec: DocString block is terminated when encountering an empty line.
  * Scanner: Fix bug when two empty NatSpec comments lead to scanning past EOL.
+ * Type Checker: Fix type deduction for exponentiation and shifts with literals as base.
 
 
 ### 0.6.8 (2020-05-14)
