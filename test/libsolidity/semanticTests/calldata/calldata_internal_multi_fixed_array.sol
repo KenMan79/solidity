@@ -13,5 +13,7 @@ contract C {
         return this.f(4, x, 5);
     }
 }
+// ====
+// compileViaYul: also
 // ----
 // g() -> 7, 8
