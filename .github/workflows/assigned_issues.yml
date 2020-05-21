@@ -1,0 +1,15 @@
+name: Move assigned issues into "In progress" in "Solidity" project board
+
+on:
+  issues:
+    types: [assigned]
+
+jobs:
+  automate-project-columns:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: alex-page/github-project-automation-plus@v0.2.3
+        with:
+          project: Solidity
+          column: In progress
+          repo-token: ${{ secrets.ASSIGNED_ISSUES_TOKEN }}

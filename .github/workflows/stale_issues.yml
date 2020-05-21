@@ -1,0 +1,17 @@
+Name: Comment and mark stale issues
+
+on:
+  schedule:
+  - cron: "0 0 * * *"
+
+jobs:
+  stale:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/stale@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        stale-issue-message: 'Issue has been inactive for too long. Consider closing or moving to icebox. This message is automated.'
+        stale-issue-label: 'no-issue-activity'

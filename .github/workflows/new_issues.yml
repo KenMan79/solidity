@@ -1,0 +1,15 @@
+name: Move new issues into "New issues" in "Solidity" project board
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  automate-project-columns:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: alex-page/github-project-automation-plus@v0.2.3
+        with:
+          project: Solidity
+          column: New issues
+          repo-token: ${{ secrets.NEW_ISSUES_TOKEN }}
