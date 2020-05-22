@@ -19,6 +19,7 @@
  */
 
 #include <libyul/backends/wasm/TextTransform.h>
+#include <libyul/Exceptions.h>
 
 #include <libsolutil/StringUtils.h>
 
@@ -65,7 +66,12 @@ string TextTransform::run(wasm::Module const& _module)
 
 string TextTransform::operator()(wasm::Literal const& _literal)
 {
-	return "(i64.const " + to_string(_literal.value) + ")";
+	if (holds_alternative<uint32_t>(_literal.value))
+		return "(i32.const " + to_string(get<uint32_t>(_literal.value)) + ")";
+	else if (holds_alternative<uint64_t>(_literal.value))
+		return "(i64.const " + to_string(get<uint64_t>(_literal.value)) + ")";
+	else
+		yulAssert(false, "Invalid literal type");
 }
 
 string TextTransform::operator()(wasm::StringLiteral const& _literal)

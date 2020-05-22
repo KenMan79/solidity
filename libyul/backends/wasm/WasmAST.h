@@ -50,7 +50,7 @@ using Expression = std::variant<
 	Block, If, Loop, Break, BreakIf, Return
 >;
 
-struct Literal { uint64_t value; };
+struct Literal { std::variant<uint32_t, uint64_t> value; };
 struct StringLiteral { std::string value; };
 struct LocalVariable { std::string name; };
 struct GlobalVariable { std::string name; };

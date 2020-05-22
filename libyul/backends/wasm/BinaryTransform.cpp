@@ -274,7 +274,12 @@ bytes BinaryTransform::run(Module const& _module)
 
 bytes BinaryTransform::operator()(Literal const& _literal)
 {
-	return toBytes(Opcode::I64Const) + lebEncodeSigned(_literal.value);
+	if (holds_alternative<uint32_t>(_literal.value))
+		return toBytes(Opcode::I32Const) + lebEncodeSigned(get<uint32_t>(_literal.value));
+	else if (holds_alternative<uint64_t>(_literal.value))
+		return toBytes(Opcode::I64Const) + lebEncodeSigned(get<uint64_t>(_literal.value));
+	else
+		yulAssert(false, "Invalid literal type");
 }
 
 bytes BinaryTransform::operator()(StringLiteral const&)

@@ -166,8 +166,20 @@ wasm::Expression WasmCodeTransform::operator()(Identifier const& _identifier)
 wasm::Expression WasmCodeTransform::operator()(Literal const& _literal)
 {
 	u256 value = valueOfLiteral(_literal);
-	yulAssert(value <= numeric_limits<uint64_t>::max(), "Literal too large: " + value.str());
-	return wasm::Literal{uint64_t(value)};
+
+	yulAssert(m_dialect.types.count(_literal.type) == 1, "");
+	if (_literal.type == "i32"_yulstring)
+	{
+		yulAssert(value <= numeric_limits<uint32_t>::max(), "Literal too large: " + value.str());
+		return wasm::Literal{static_cast<uint32_t>(value)};
+	}
+	else if (_literal.type == "i64"_yulstring)
+	{
+		yulAssert(value <= numeric_limits<uint64_t>::max(), "Literal too large: " + value.str());
+		return wasm::Literal{static_cast<uint64_t>(value)};
+	}
+	else
+		yulAssert(false, "Invalid Yul literal type: " + _literal.type.str());
 }
 
 wasm::Expression WasmCodeTransform::operator()(If const& _if)
@@ -176,7 +188,7 @@ wasm::Expression WasmCodeTransform::operator()(If const& _if)
 
 	vector<wasm::Expression> args;
 	args.emplace_back(visitReturnByValue(*_if.condition));
-	args.emplace_back(wasm::Literal{0});
+	args.emplace_back(wasm::Literal{static_cast<uint64_t>(0)});
 	return wasm::If{
 		make_unique<wasm::Expression>(wasm::BuiltinCall{"i64.ne", std::move(args)}),
 		visit(_if.body.statements),
